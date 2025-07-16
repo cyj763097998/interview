@@ -19,27 +19,27 @@ class BlogView(View):
         ### 数据展示，先从redis缓存查数据，没有在往数据库查
         article_key = f'article:read:{article.id}'
         user_article_key = f'user:read:{ip}:article:{article.id}'
-        user_article_uv_key = f'user:read:{ip}:article:{article.id}:uv'
+        user_article_uv_key = f'user:read:article:{article.id}:uv'
 
         # 总阅读数
         total_views = redis.hget(article_key, 'total_views')
         if total_views is None:
             total_views = 0
-            res = Article.objects.filter(pk=pk)
+            res = Article.objects.filter(pk=pk).first()
             if res:
                 total_views = res.total_views
         # 用户人次
         uv = redis.scard(user_article_uv_key)
         if uv is None:
             uv = 0
-            res = Article.objects.filter(pk=pk)
+            res = Article.objects.filter(pk=pk).first()
             if res:
                 uv = res.uv
         # 用户阅读数
         pv = redis.hgetall(user_article_key).get(b'pv')
         if pv is None:
             pv = 0
-            res = UserReadRecord.objects.filter(ip=ip)
+            res = UserReadRecord.objects.filter(ip=ip).first()
             if res:
                 pv = res.pv
 
