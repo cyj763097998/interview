@@ -18,15 +18,15 @@ def sync_redis_to_db(article_id, ip):
         Article.objects.update_or_create(
             id=article_id,
             defaults={
-                'total_views': read_stats.total_views,
-                'uv': read_stats.uv
+                'total_views': read_stats['total_views'],
+                'uv': read_stats['uv']
             }
         )
         # 删除缓存保证一致性
         redis.delete('total_views')
     except Exception as e:
         # 数据库异常级别并降级处理,更新缓存
-        redis.hset(ArticleReadCounter.get_article_key, 'total_views', read_stats.total_views)
+        redis.hset(ArticleReadCounter.get_article_key, 'total_views', read_stats['total_views'])
         logging.warning(f'异步更新失败: {str(e)}')
 
     # 同步用户阅读记录
@@ -35,11 +35,11 @@ def sync_redis_to_db(article_id, ip):
         UserReadRecord.objects.get_or_create(
                 ip=ip,
                 article_id=article_id,
-                defaults={'pv': user_stats.pv}
+                defaults={'pv': user_stats['pv']}
             )
         # 删除缓存保证一致性
-        redis.delete(user_stats.pv)
+        redis.delete(user_stats['pv'])
     except Exception as e:
         # 数据库异常级别并降级处理,更新缓存
-        redis.hincrby(ArticleReadCounter.get_user_article_key, 'pv', user_stats.pv)
+        redis.hincrby(ArticleReadCounter.get_user_article_key, 'pv', user_stats['pv'])
         logging.warning(f'异步更新失败: {str(e)}')
