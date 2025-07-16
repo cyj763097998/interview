@@ -3,7 +3,7 @@ from django.db import models
 class Article(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
-    author = models.CharField()
+    author = models.CharField(max_length=50)
     total_views = models.IntegerField(default=0)  # 总阅读数
     uv = models.IntegerField(default=0)   # 用户人次
 
