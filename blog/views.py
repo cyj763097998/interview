@@ -17,9 +17,9 @@ class BlogView(View):
         # 用户ip
         ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR'))
         ### 数据展示，先从redis缓存查数据，没有在往数据库查
-        article_key = 'article:read:{article.id}'
-        user_article_key = 'user:read:{ip}:article:{article.id}'
-        user_article_uv_key = 'user:read:{ip}:article:{article.id}:uv'
+        article_key = f'article:read:{article.id}'
+        user_article_key = f'user:read:{ip}:article:{article.id}'
+        user_article_uv_key = f'user:read:{ip}:article:{article.id}:uv'
 
         # 总阅读数
         total_views = redis.hget(article_key, 'total_views')

@@ -8,9 +8,9 @@ from .models import Article, UserReadRecord
 def sync_redis_to_db(article_id, ip):
     redis = get_redis_connection()
 
-    article_key = 'article:read:{article.id}'
-    user_article_key = 'user:read:{ip}:article:{article.id}'
-    user_article_uv_key = 'user:read:{ip}:article:{article.id}:uv'
+    article_key = f'article:read:{article_id}'
+    user_article_key = f'user:read:{ip}:article:{article_id}'
+    user_article_uv_key = f'user:read:{ip}:article:{article_id}:uv'
 
     total_views = redis.hget(article_key, 'total_views') or 0
     uv = redis.scard(user_article_uv_key) or 0
