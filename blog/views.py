@@ -51,8 +51,8 @@ class BlogView(View):
         data = {
             'article_id': article.id,
             'ip': ip,
-            'pv': pv,
-            'uv': uv,
-            'total_views': total_views
+            'pv': int(pv),
+            'uv': int(uv),
+            'total_views': int(total_views)
         }
         return JsonResponse(data)
