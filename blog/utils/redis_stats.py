@@ -16,7 +16,7 @@ class ArticleReadCounter:
         return f'user:read:{ip}:article:{article_id}'
 
     @classmethod
-    def increment_read_count(cls, article_id, ip, total_views=0, pv=0):
+    def increment_read_count(cls, article_id, ip, tvs, pvs):
         ### 增加阅读计数
         article_key = cls.get_article_key(article_id)
 
@@ -26,7 +26,7 @@ class ArticleReadCounter:
         # 总阅读数+1
         total_views, uv = cls.get_read_stats(article_id)
         if total_views is None:
-            pipe.hincrby(article_key, 'total_views', total_views)
+            pipe.hincrby(article_key, 'total_views', tvs)
         else:
             pipe.hincrby(article_key, 'total_views', 1)
 
@@ -34,7 +34,7 @@ class ArticleReadCounter:
         pv = cls.get_user_read_stats(ip, article_id)
         user_article_key = cls.get_user_article_key(ip, article_id)
         if pv is None:
-            pipe.hincrby(user_article_key, 'pv', pv)
+            pipe.hincrby(user_article_key, 'pv', pvs)
         else:
             pipe.hincrby(user_article_key, 'pv', 1)
         # 用户人次
