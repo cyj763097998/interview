@@ -31,13 +31,13 @@ def sync_redis_to_db_ip(article_id, ip):
     # 同步用户阅读记录
     # 先更新数据库
     try:
-        UserReadRecord.objects.get_or_create(
+        UserReadRecord.objects.update_or_create(
                 ip=ip,
                 article_id=article_id,
-                defaults = {
+                defaults={
                     'pv': user_stats['pv']
                 }
-            )
+        )
         # 删除缓存保证一致性
         redis.delete(user_stats['pv'])
     except Exception as e:
