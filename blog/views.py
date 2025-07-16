@@ -4,7 +4,7 @@ from django.views import View
 from django.http import JsonResponse
 from django_redis import get_redis_connection
 
-from .models import Article, UserReadRecord
+from blog.models import Article, UserReadRecord
 
 class BlogView(View):
     def get(self, request, pk):
@@ -22,17 +22,26 @@ class BlogView(View):
         user_article_uv_key = f'user:read:{ip}:article:{article.id}:uv'
 
         # 总阅读数
-        total_views = int(redis.hget(article_key, 'total_views'))
+        total_views = redis.hget(article_key, 'total_views')
         if total_views is None:
-            total_views = Article.objects.get(pk=pk).total_views
+            total_views = 0
+            res = Article.objects.filter(pk=pk)
+            if res:
+                total_views = res.total_views
         # 用户人次
-        uv = int(redis.scard(user_article_uv_key))
+        uv = redis.scard(user_article_uv_key)
         if uv is None:
-            uv = Article.objects.get(pk=pk).uv
+            uv = 0
+            res = Article.objects.filter(pk=pk)
+            if res:
+                uv = res.uv
         # 用户阅读数
-        pv = int(redis.hgetall(user_article_key).get(b'pv'))
+        pv = redis.hgetall(user_article_key).get(b'pv')
         if pv is None:
-            pv = UserReadRecord.objects.get(pk=pk).pv
+            pv = 0
+            res = UserReadRecord.objects.filter(ip=ip)
+            if res:
+                pv = res.pv
 
         ### 做累加操作，存入redis缓存
         pipe = redis.pipeline()
@@ -52,8 +61,8 @@ class BlogView(View):
         data = {
             'article_id': article.id,
             'ip': ip,
-            'pv': pv,
-            'uv': uv,
-            'total_views': total_views
+            'pv': int(pv),
+            'uv': int(uv),
+            'total_views': int(total_views)
         }
         return JsonResponse(data)
