@@ -12,7 +12,7 @@ class BlogView(View):
         article = Article.objects.filter(pk=pk).first()
         if not article:
             return JsonResponse({})
-        
+
         # 用户ip
         ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR'))
 

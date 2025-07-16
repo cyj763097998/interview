@@ -12,8 +12,8 @@ class ArticleReadCounter:
         return f'article:read:{article_id}'
 
     @staticmethod
-    def get_user_article_key(user_ip, article_id):
-        return f'user:read:{user_ip}:{article_id}'
+    def get_user_article_key(ip, article_id):
+        return f'user:read:{ip}:article:{article_id}'
 
     @classmethod
     def increment_read_count(cls, article_id, ip):
