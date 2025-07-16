@@ -4,14 +4,10 @@ from django_redis import get_redis_connection
 from .models import Article, UserReadRecord
 from .utils.redis_stats import ArticleReadCounter
 
-
+redis = get_redis_connection()
 @shared_task
-def sync_redis_to_db(article_id, ip):
-    redis = get_redis_connection()
-
+def sync_redis_to_db(article_id):
     read_stats = ArticleReadCounter.get_read_stats(article_id)
-    user_stats = ArticleReadCounter.get_user_read_stats(ip, article_id)
-
     # 同步总阅读量
     # 更新或创建文章统计
     try:
@@ -29,6 +25,9 @@ def sync_redis_to_db(article_id, ip):
         redis.hset(ArticleReadCounter.get_article_key, 'total_views', read_stats['total_views'])
         logging.warning(f'异步更新失败: {str(e)}')
 
+@shared_task
+def sync_redis_to_db_ip(article_id, ip):
+    user_stats = ArticleReadCounter.get_user_read_stats(ip, article_id)
     # 同步用户阅读记录
     # 先更新数据库
     try:
