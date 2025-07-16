@@ -24,12 +24,19 @@ class ArticleReadCounter:
         pipe = redis.pipeline()
 
         # 总阅读数+1
-        pipe.hincrby(article_key, 'total_views', total_views)
+        total_views, uv = cls.get_read_stats(article_id)
+        if total_views is None:
+            pipe.hincrby(article_key, 'total_views', total_views)
+        else:
+            pipe.hincrby(article_key, 'total_views', 1)
 
         # 用户阅读数
+        pv = cls.get_user_read_stats(ip, article_id)
         user_article_key = cls.get_user_article_key(ip, article_id)
-        pipe.hincrby(user_article_key, 'pv', pv)
-
+        if pv is None:
+            pipe.hincrby(user_article_key, 'pv', pv)
+        else:
+            pipe.hincrby(user_article_key, 'pv', 1)
         # 用户人次
         uv = f'{article_key}:uv'
         pipe.sadd(uv, ip)
