@@ -41,17 +41,10 @@ class ArticleReadCounter:
         ### 获取阅读统计
         article_key = cls.get_article_key(article_id)
         uv = f'{article_key}:uv'
-
         total_views = redis.hget(article_key, 'total_views')
-        if not total_views:
-            return None
+        uv = redis.scard(uv)
 
-        uv = redis.scard(uv) or 0
-
-        return {
-            'total_views': int(total_views),
-            'uv': uv
-        }
+        return total_views, uv
 
     @classmethod
     def get_user_read_stats(cls, ip, article_id):
@@ -62,6 +55,4 @@ class ArticleReadCounter:
         if not data:
             return None
 
-        return {
-            'pv': int(data.get(b'pv', 0))
-        }
+        return data.get(b'pv', 0)

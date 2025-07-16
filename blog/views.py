@@ -18,20 +18,27 @@ class BlogView(View):
 
         ### 数据展示，先从redis缓存查数据，没有在往数据库查
         # 获取阅读统计
-        read_stats = ArticleReadCounter.get_read_stats(article.id)
-        if read_stats is None:
-            read_stats = {}
+        total_views, uv = ArticleReadCounter.get_read_stats(article.id)
+        if total_views is None:
+            total_views = 0
             res = Article.objects.filter(pk=pk).first()
             if res:
-                read_stats['total_views'] = res.total_views
+                total_views = int(res.total_views)
+
+        # 获取uv数
+        if uv is None:
+            uv = 0
+            res = Article.objects.filter(pk=pk).first()
+            if res:
+                uv = int(res.uv)
 
         # 获取用户文章的阅读统计
-        user_stats = ArticleReadCounter.get_user_read_stats(ip, article.id)
-        if user_stats is None:
-            user_stats = {}
+        pv = ArticleReadCounter.get_user_read_stats(ip, article.id)
+        if pv is None:
+            pv = 0
             res = UserReadRecord.objects.filter(ip=ip).first()
             if res:
-                user_stats['pv'] = res.pv
+                pv = int(res.pv)
 
         ### 做累加操作，存入redis缓存
         ArticleReadCounter.increment_read_count(article.id, ip)
@@ -44,8 +51,8 @@ class BlogView(View):
         data = {
             'article_id': article.id,
             'ip': ip,
-            'pv': int(user_stats['pv']),
-            'uv': int(read_stats['uv']),
-            'total_views': int(read_stats['total_views'])
+            'pv': pv,
+            'uv': uv,
+            'total_views': total_views
         }
         return JsonResponse(data)
