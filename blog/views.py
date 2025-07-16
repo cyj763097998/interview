@@ -20,10 +20,11 @@ class BlogView(View):
         # 获取阅读统计
         total_views, uv = ArticleReadCounter.get_read_stats(article.id)
         if total_views is None:
-            total_views = 0
             res = Article.objects.filter(pk=pk).first()
             if res:
                 total_views = int(res.total_views)
+            else:
+                total_views = 0
 
         # 获取uv数
         if uv is None:
@@ -31,6 +32,8 @@ class BlogView(View):
             res = Article.objects.filter(pk=pk).first()
             if res:
                 uv = int(res.uv)
+            else:
+                uv = 0
 
         # 获取用户文章的阅读统计
         pv = ArticleReadCounter.get_user_read_stats(ip, article.id)
@@ -39,7 +42,8 @@ class BlogView(View):
             res = UserReadRecord.objects.filter(ip=ip).first()
             if res:
                 pv = int(res.pv)
-
+            else:
+                pv = 0
         ### 做累加操作，存入redis缓存
         ArticleReadCounter.increment_read_count(article.id, ip)
 
