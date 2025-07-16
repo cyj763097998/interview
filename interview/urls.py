@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from blog.views import BlogView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('^blog/(?P<pk\d+>)$', BlogView.as_view()),
+
 ]
