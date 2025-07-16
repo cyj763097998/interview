@@ -45,8 +45,8 @@ class BlogView(View):
         pipe.execute()
 
         # 触发异步任务
-        from .tasks import sync_redis_to_db
-        sync_redis_to_db.delay(article.id, ip)
+        # from .tasks import sync_redis_to_db
+        # sync_redis_to_db.delay(article.id, ip)
 
         ### 数据构造 {article_id:1, 'ip':1,'pv':100 , 'uv':4,'total_view':1000}
         data = {
