@@ -14,7 +14,7 @@ def sync_redis_to_db(article_id, ip):
 
     total_views = redis.hget(article_key, 'total_views') or 0
     uv = redis.scard(user_article_uv_key) or 0
-    pv = redis.hgetall(user_article_key) or 0
+    pv = redis.hgetall(user_article_key).get(b'pv') or 0
 
     # 同步总阅读量
     # 更新或创建文章统计
