@@ -30,7 +30,7 @@ class BlogView(View):
         if uv is None:
             uv = Article.objects.get(pk=pk).uv
         # 用户阅读数
-        pv = redis.hgetall(user_article_key)
+        pv = int(redis.hgetall(user_article_key).get(b'pv'))
         if pv is None:
             pv = UserReadRecord.objects.get(pk=pk).pv
 
