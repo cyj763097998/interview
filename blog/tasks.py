@@ -34,7 +34,9 @@ def sync_redis_to_db_ip(article_id, ip):
         UserReadRecord.objects.get_or_create(
                 ip=ip,
                 article_id=article_id,
-                pv=user_stats['pv']
+                defaults = {
+                    'pv': user_stats['pv']
+                }
             )
         # 删除缓存保证一致性
         redis.delete(user_stats['pv'])
