@@ -42,8 +42,8 @@ class BlogView(View):
         data = {
             'article_id': article.id,
             'ip': ip,
-            'pv': user_stats.pv,
-            'uv': read_stats.uv,
-            'total_views': read_stats.total_views
+            'pv': int(user_stats['pv']),
+            'uv': int(read_stats['uv']),
+            'total_views': int(read_stats['total_views'])
         }
         return JsonResponse(data)
