@@ -10,7 +10,7 @@ def sync_redis_to_db(article_id, ip):
 
     article_key = f'article:read:{article_id}'
     user_article_key = f'user:read:{ip}:article:{article_id}'
-    user_article_uv_key = f'user:read:{ip}:article:{article_id}:uv'
+    user_article_uv_key = f'user:read:article:{article_id}:uv'
 
     total_views = redis.hget(article_key, 'total_views') or 0
     uv = redis.scard(user_article_uv_key) or 0
