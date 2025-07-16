@@ -22,11 +22,11 @@ class BlogView(View):
         user_article_uv_key = f'user:read:{ip}:article:{article.id}:uv'
 
         # 总阅读数
-        total_views = redis.hget(article_key, 'total_views')
+        total_views = int(redis.hget(article_key, 'total_views'))
         if total_views is None:
             total_views = Article.objects.get(pk=pk).total_views
         # 用户人次
-        uv = redis.scard(user_article_uv_key)
+        uv = int(redis.scard(user_article_uv_key))
         if uv is None:
             uv = Article.objects.get(pk=pk).uv
         # 用户阅读数
