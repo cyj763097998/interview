@@ -16,7 +16,6 @@ class UserReadRecord(models.Model):
     ip = models.CharField(max_length=30)
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     pv = models.IntegerField(default=0)    # 用户阅读数
-    last_update = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = '用户阅读记录'
