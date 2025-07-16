@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ed93101e-55e2-45bf-908a-7d86d7afbfe2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/blog/celery.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/blog/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/blog/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/blog/celery.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,11 +15,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/interview/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="647">
-              <caret line="92" column="32" selection-start-line="92" selection-start-column="20" selection-end-line="92" selection-end-column="32" />
+            <state relative-caret-position="372">
+              <caret line="102" column="21" selection-start-line="102" selection-end-line="102" selection-end-column="21" />
               <folding>
                 <element signature="e#310#319#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/interview/celery.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="225">
+              <caret line="13" column="24" selection-start-line="13" selection-start-column="24" selection-end-line="13" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -53,18 +61,6 @@
               <caret line="57" column="8" selection-start-line="57" selection-start-column="8" selection-end-line="57" selection-end-column="46" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/blog/celery.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="200">
-              <caret line="8" column="18" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="18" />
-              <folding>
-                <element signature="e#12#68#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -113,6 +109,7 @@
         <option value="$PROJECT_DIR$/blog/tasks.py" />
         <option value="$PROJECT_DIR$/blog/views.py" />
         <option value="$PROJECT_DIR$/blog/celery.py" />
+        <option value="$PROJECT_DIR$/interview/celery.py" />
       </list>
     </option>
   </component>
@@ -208,12 +205,12 @@
       <updated>1752628593713</updated>
       <workItem from="1752628595118" duration="26000" />
       <workItem from="1752628683064" duration="10000" />
-      <workItem from="1752628754419" duration="15097000" />
+      <workItem from="1752628754419" duration="16411000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="15133000" />
+    <option name="totallyTimeSpent" value="16447000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -271,16 +268,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="290">
           <caret line="710" column="6" selection-start-line="710" selection-start-column="6" selection-end-line="710" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/interview/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="647">
-          <caret line="92" column="32" selection-start-line="92" selection-start-column="20" selection-end-line="92" selection-end-column="32" />
-          <folding>
-            <element signature="e#310#319#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -345,10 +332,27 @@
     <entry file="file://$PROJECT_DIR$/blog/celery.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="200">
-          <caret line="8" column="18" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="18" />
+          <caret line="8" column="23" selection-start-line="8" selection-start-column="23" selection-end-line="8" selection-end-column="23" />
           <folding>
             <element signature="e#12#68#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interview/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="372">
+          <caret line="102" column="21" selection-start-line="102" selection-end-line="102" selection-end-column="21" />
+          <folding>
+            <element signature="e#310#319#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interview/celery.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="13" column="24" selection-start-line="13" selection-start-column="24" selection-end-line="13" selection-end-column="24" />
         </state>
       </provider>
     </entry>
