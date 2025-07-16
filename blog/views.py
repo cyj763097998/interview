@@ -45,7 +45,7 @@ class BlogView(View):
             else:
                 pv = 0
         ### 做累加操作，存入redis缓存
-        ArticleReadCounter.increment_read_count(article.id, ip)
+        ArticleReadCounter.increment_read_count(article.id, ip, total_views, pv)
 
         # 触发异步任务
         from blog.tasks import sync_redis_to_db

@@ -16,7 +16,7 @@ class ArticleReadCounter:
         return f'user:read:{ip}:article:{article_id}'
 
     @classmethod
-    def increment_read_count(cls, article_id, ip):
+    def increment_read_count(cls, article_id, ip, total_views=0, pv=0):
         ### 增加阅读计数
         article_key = cls.get_article_key(article_id)
 
@@ -24,11 +24,11 @@ class ArticleReadCounter:
         pipe = redis.pipeline()
 
         # 总阅读数+1
-        pipe.hincrby(article_key, 'total_views', 1)
+        pipe.hincrby(article_key, 'total_views', total_views)
 
         # 用户阅读数
         user_article_key = cls.get_user_article_key(ip, article_id)
-        pipe.hincrby(user_article_key, 'pv', 1)
+        pipe.hincrby(user_article_key, 'pv', pv)
 
         # 用户人次
         uv = f'{article_key}:uv'
