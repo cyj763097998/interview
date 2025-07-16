@@ -2,19 +2,15 @@ import logging
 from celery import shared_task
 from django_redis import get_redis_connection
 from .models import Article, UserReadRecord
+from .utils.redis_stats import ArticleReadCounter
 
 
 @shared_task
 def sync_redis_to_db(article_id, ip):
     redis = get_redis_connection()
 
-    article_key = f'article:read:{article_id}'
-    user_article_key = f'user:read:{ip}:article:{article_id}'
-    user_article_uv_key = f'user:read:article:{article_id}:uv'
-
-    total_views = redis.hget(article_key, 'total_views') or 0
-    uv = redis.scard(user_article_uv_key) or 0
-    pv = redis.hgetall(user_article_key).get(b'pv') or 0
+    read_stats = ArticleReadCounter.get_read_stats(article_id)
+    user_stats = ArticleReadCounter.get_user_read_stats(ip, article_id)
 
     # 同步总阅读量
     # 更新或创建文章统计
@@ -22,15 +18,15 @@ def sync_redis_to_db(article_id, ip):
         Article.objects.update_or_create(
             id=article_id,
             defaults={
-                'total_views': total_views,
-                'uv': uv
+                'total_views': read_stats.total_views,
+                'uv': read_stats.uv
             }
         )
         # 删除缓存保证一致性
         redis.delete('total_views')
     except Exception as e:
-        # 更新缓存
-        redis.hset(article_key, 'total_views', total_views)
+        # 数据库异常级别并降级处理,更新缓存
+        redis.hset(ArticleReadCounter.get_article_key, 'total_views', read_stats.total_views)
         logging.warning(f'异步更新失败: {str(e)}')
 
     # 同步用户阅读记录
@@ -39,10 +35,11 @@ def sync_redis_to_db(article_id, ip):
         UserReadRecord.objects.get_or_create(
                 ip=ip,
                 article_id=article_id,
-                defaults={'pv': pv}
+                defaults={'pv': user_stats.pv}
             )
         # 删除缓存保证一致性
-        redis.delete(pv)
+        redis.delete(user_stats.pv)
     except Exception as e:
-        redis.hincrby(user_article_key, 'pv', pv)
+        # 数据库异常级别并降级处理,更新缓存
+        redis.hincrby(ArticleReadCounter.get_user_article_key, 'pv', user_stats.pv)
         logging.warning(f'异步更新失败: {str(e)}')
