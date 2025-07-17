@@ -18,34 +18,35 @@ class BlogView(View):
 
         ### 数据展示，先从redis缓存查数据，没有在往数据库查
         # 获取阅读统计
-        total_views, uv = ArticleReadCounter.get_read_stats(article.id)
-        if total_views is None:
+        read_stats = ArticleReadCounter.get_read_stats(article.id)
+        uv_ip_list = []
+        if read_stats['total_views'] is None:
+            uv_ip_list = UserReadRecord.objects.filter(article_id=article.id).values('ip').distinct()
             res = Article.objects.filter(pk=pk).first()
             if res:
-                total_views = int(res.total_views)
+                read_stats['total_views'] = int(res.total_views)
             else:
-                total_views = 0
+                read_stats['total_views'] = 0
 
         # 获取uv数
-        if uv is None:
-            uv = 0
+        if read_stats['uv'] is None:
             res = Article.objects.filter(pk=pk).first()
             if res:
-                uv = int(res.uv)
+                read_stats['uv'] = int(res.uv)
             else:
-                uv = 0
+                read_stats['uv'] = 0
 
         # 获取用户文章的阅读统计
-        pv = ArticleReadCounter.get_user_read_stats(ip, article.id)
-        if pv is None:
-            pv = 0
+        user_read_stats = ArticleReadCounter.get_user_read_stats(ip, article.id)
+        if user_read_stats is None:
+            user_read_stats = {}
             res = UserReadRecord.objects.filter(ip=ip).first()
             if res:
-                pv = int(res.pv)
+                user_read_stats['pv'] = int(res.pv)
             else:
-                pv = 0
+                user_read_stats['pv'] = 0
         ### 做累加操作，存入redis缓存
-        ArticleReadCounter.increment_read_count(article.id, ip, total_views, pv)
+        ArticleReadCounter.increment_read_count(article.id, ip, read_stats['total_views'], user_read_stats['pv'], uv_ip_list)
 
         # 触发异步任务
         from blog.tasks import sync_redis_to_db
@@ -55,8 +56,8 @@ class BlogView(View):
         data = {
             'article_id': article.id,
             'ip': ip,
-            'pv': int(pv),
-            'uv': int(uv),
-            'total_views': int(total_views)
+            'pv': int(user_read_stats['pv']),
+            'uv': int(read_stats['uv']),
+            'total_views': int(read_stats['total_views'])
         }
         return JsonResponse(data)

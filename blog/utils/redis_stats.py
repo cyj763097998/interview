@@ -16,7 +16,7 @@ class ArticleReadCounter:
         return f'user:read:{ip}:article:{article_id}'
 
     @classmethod
-    def increment_read_count(cls, article_id, ip, total_views, pv):
+    def increment_read_count(cls, article_id, ip, total_views, pv, uv_list=[]):
         ### 增加阅读计数
         article_key = cls.get_article_key(article_id)
 
@@ -24,22 +24,26 @@ class ArticleReadCounter:
         pipe = redis.pipeline()
 
         # 总阅读数+1
-        res_total_views, res_total_uv = cls.get_read_stats(article_id)
-        if res_total_views is None:
+        read_stats = cls.get_read_stats(article_id)
+        if read_stats['total_views'] is None:
             pipe.hincrby(article_key, 'total_views', total_views)
         else:
             pipe.hincrby(article_key, 'total_views', 1)
 
         # 用户阅读数
-        res_pv = cls.get_user_read_stats(ip, article_id)
+        user_read_stats = cls.get_user_read_stats(ip, article_id)
         user_article_key = cls.get_user_article_key(ip, article_id)
-        if res_pv is None:
+        if user_read_stats is None:
             pipe.hincrby(user_article_key, 'pv', pv)
         else:
             pipe.hincrby(user_article_key, 'pv', 1)
         # 用户人次
-        uv = f'{article_key}:uv'
-        pipe.sadd(uv, ip)
+        uv_key = f'{article_key}:uv'
+        if uv_list:
+            for res in uv_list:
+                pipe.sadd(uv_key, res['ip'])
+        else:
+            pipe.sadd(uv_key, ip)
 
         pipe.execute()
 
@@ -51,7 +55,10 @@ class ArticleReadCounter:
         total_views = redis.hget(article_key, 'total_views')
         uv = redis.scard(uv)
 
-        return total_views, uv
+        return {
+                'total_views': total_views,
+                'uv': uv
+        }
 
     @classmethod
     def get_user_read_stats(cls, ip, article_id):
@@ -62,4 +69,4 @@ class ArticleReadCounter:
         if not data:
             return None
 
-        return data.get(b'pv', 0)
+        return {'pv': data.get(b'pv', 0)}
