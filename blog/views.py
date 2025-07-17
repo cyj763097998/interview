@@ -19,9 +19,7 @@ class BlogView(View):
         ### 数据展示，先从redis缓存查数据，没有在往数据库查
         # 获取阅读统计
         read_stats = ArticleReadCounter.get_read_stats(article.id)
-        uv_ip_list = []
         if read_stats['total_views'] is None:
-            uv_ip_list = UserReadRecord.objects.filter(article_id=article.id).values('ip').distinct()
             res = Article.objects.filter(pk=pk).first()
             if res:
                 read_stats['total_views'] = int(res.total_views)
@@ -29,7 +27,9 @@ class BlogView(View):
                 read_stats['total_views'] = 0
 
         # 获取uv数
+        uv_ip_list = []
         if read_stats['uv'] is None:
+            uv_ip_list = UserReadRecord.objects.filter(article_id=article.id).values('ip').distinct()
             res = Article.objects.filter(pk=pk).first()
             if res:
                 read_stats['uv'] = int(res.uv)
